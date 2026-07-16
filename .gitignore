@@ -1,0 +1,25 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# JavaScript
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.coverage
+backend/htmlcov/
+*.py[cod]
+
+# Tooling and OS files
+.DS_Store
+.idea/
+.vscode/
