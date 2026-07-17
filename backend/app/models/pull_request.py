@@ -10,8 +10,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
+    from app.models.ai_advisor import AIAdvisor
+    from app.models.ai_analysis import AIAnalysis
     from app.models.commit import Commit
     from app.models.github_repository import GitHubRepository
+    from app.models.parsed_change import ParsedChange
     from app.models.pull_request_file import PullRequestFile
     from app.models.reviewer import Reviewer
 
@@ -57,6 +60,15 @@ class PullRequest(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     reviewers: Mapped[list[Reviewer]] = relationship(
         "Reviewer", back_populates="pull_request", cascade="all, delete-orphan"
+    )
+    parsed_change: Mapped[ParsedChange | None] = relationship(
+        "ParsedChange", back_populates="pull_request", cascade="all, delete-orphan", uselist=False
+    )
+    ai_analysis: Mapped[AIAnalysis | None] = relationship(
+        "AIAnalysis", back_populates="pull_request", cascade="all, delete-orphan", uselist=False
+    )
+    ai_advisor: Mapped[AIAdvisor | None] = relationship(
+        "AIAdvisor", back_populates="pull_request", cascade="all, delete-orphan", uselist=False
     )
 
     def __repr__(self) -> str:

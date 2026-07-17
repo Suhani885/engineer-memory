@@ -5,7 +5,9 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from app.ai.analyzer import analyze_pull_request, generate_advisor_insights
 from app.core.db import SessionLocal
+from app.parser.diff_parser import EngineeringParser
 from app.repositories.github_sync import GitHubSyncRepository
 from app.services.github_client import GitHubClient, GitHubClientError
 from app.workers.celery_app import celery_app
@@ -126,6 +128,22 @@ def process_raw_event(self: Any, raw_event_id: str) -> None:
             sync_repo.sync_pull_request_files(pr_record.id, files_data)
             sync_repo.sync_commits(pr_record.id, commits_data, merge_commit_data)
             sync_repo.sync_reviews(pr_record.id, reviews_data)
+
+            # 3. Parse Structural Changes (No AI)
+            db_files = pr_record.files
+            parser = EngineeringParser()
+            parsed_data = parser.parse(db_files)
+            sync_repo.upsert_parsed_change(pr_record.id, parsed_data)
+
+            # 4. Deep AI Analysis (Summary)
+            ai_data = analyze_pull_request(pr_details, files_data, parsed_data)
+            if ai_data:
+                sync_repo.upsert_ai_analysis(pr_record.id, ai_data)
+
+            # 5. Deep AI Advisor Insights
+            advisor_data = generate_advisor_insights(pr_details, files_data, parsed_data)
+            if advisor_data:
+                sync_repo.upsert_ai_advisor(pr_record.id, advisor_data)
 
             # Commit all changes to DB
             db.commit()

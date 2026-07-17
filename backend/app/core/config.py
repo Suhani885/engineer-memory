@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     # -----------------------------------------------------------------------
     # OpenAI (populated when AI layer is wired up)
     # -----------------------------------------------------------------------
-    openai_api_key: str = ""
+    openai_api_key: str | None = None
 
     # -----------------------------------------------------------------------
     # Pydantic config

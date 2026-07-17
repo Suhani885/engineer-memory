@@ -187,16 +187,3 @@ All organisation routes require:
 | `POST` | `/organizations/{slug}/members` | owner/admin | Add member |
 | `DELETE` | `/organizations/{slug}/members/{user_id}` | owner/admin | Remove member |
 
----
-
-## Roadmap
-
-- [x] Multi-tenant foundation (Orgs, Users, Memberships, JWT auth)
-- [ ] GitHub App integration (webhooks, PR sync)
-- [ ] AI change understanding (OpenAI / Codex)
-- [ ] Knowledge base auto-generation
-- [ ] Natural language search (pgvector)
-- [ ] Engineering timeline
-- [ ] AI Engineering Advisor (chat interface)
-- [ ] OAuth (GitHub, Google)
-- [ ] Billing integration

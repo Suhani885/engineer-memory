@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from __future__ import annotations
 
 import uuid
@@ -8,8 +9,11 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from app.models.ai_advisor import AIAdvisor
+from app.models.ai_analysis import AIAnalysis
 from app.models.commit import Commit
 from app.models.github_repository import GitHubRepository
+from app.models.parsed_change import ParsedChange
 from app.models.pull_request import PullRequest
 from app.models.pull_request_file import PullRequestFile
 from app.models.reviewer import Reviewer
@@ -185,3 +189,113 @@ class GitHubSyncRepository:
                 }
             )
             self._session.execute(stmt)
+
+    def upsert_parsed_change(self, pr_id: uuid.UUID, parsed_data: dict[str, Any]) -> None:
+        """Upsert parsed engineering changes for a pull request."""
+        stmt = insert(ParsedChange).values(
+            pull_request_id=pr_id,
+            functions_modified=parsed_data.get("functions_modified", []),
+            classes_modified=parsed_data.get("classes_modified", []),
+            routes=parsed_data.get("routes", []),
+            api_endpoints=parsed_data.get("api_endpoints", []),
+            sql_migrations=parsed_data.get("sql_migrations", False),
+            dependencies=parsed_data.get("dependencies", []),
+            configuration=parsed_data.get("configuration", []),
+            environment_variables=parsed_data.get("environment_variables", []),
+            frontend_components=parsed_data.get("frontend_components", []),
+            backend_services=parsed_data.get("backend_services", []),
+            tests=parsed_data.get("tests", False),
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=["pull_request_id"],
+            set_={
+                "functions_modified": stmt.excluded.functions_modified,
+                "classes_modified": stmt.excluded.classes_modified,
+                "routes": stmt.excluded.routes,
+                "api_endpoints": stmt.excluded.api_endpoints,
+                "sql_migrations": stmt.excluded.sql_migrations,
+                "dependencies": stmt.excluded.dependencies,
+                "configuration": stmt.excluded.configuration,
+                "environment_variables": stmt.excluded.environment_variables,
+                "frontend_components": stmt.excluded.frontend_components,
+                "backend_services": stmt.excluded.backend_services,
+                "tests": stmt.excluded.tests,
+                "updated_at": datetime.now(),
+            }
+        )
+        self._session.execute(stmt)
+
+    def upsert_ai_analysis(self, pr_id: uuid.UUID, ai_data: dict[str, Any]) -> None:
+        """Upsert AI analysis results for a pull request."""
+        stmt = insert(AIAnalysis).values(
+            pull_request_id=pr_id,
+            summary=ai_data.get("summary", ""),
+            engineering_impact=ai_data.get("engineering_impact", ""),
+            business_impact=ai_data.get("business_impact", ""),
+            affected_modules=ai_data.get("affected_modules", []),
+            security_impact=ai_data.get("security_impact", ""),
+            database_changes=ai_data.get("database_changes", ""),
+            api_changes=ai_data.get("api_changes", ""),
+            configuration_changes=ai_data.get("configuration_changes", ""),
+            risk_level=ai_data.get("risk_level", "Low"),
+            deployment_notes=ai_data.get("deployment_notes", ""),
+            testing_required=ai_data.get("testing_required", ""),
+            breaking_changes=ai_data.get("breaking_changes", False),
+            release_notes=ai_data.get("release_notes", ""),
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=["pull_request_id"],
+            set_={
+                "summary": stmt.excluded.summary,
+                "engineering_impact": stmt.excluded.engineering_impact,
+                "business_impact": stmt.excluded.business_impact,
+                "affected_modules": stmt.excluded.affected_modules,
+                "security_impact": stmt.excluded.security_impact,
+                "database_changes": stmt.excluded.database_changes,
+                "api_changes": stmt.excluded.api_changes,
+                "configuration_changes": stmt.excluded.configuration_changes,
+                "risk_level": stmt.excluded.risk_level,
+                "deployment_notes": stmt.excluded.deployment_notes,
+                "testing_required": stmt.excluded.testing_required,
+                "breaking_changes": stmt.excluded.breaking_changes,
+                "release_notes": stmt.excluded.release_notes,
+                "updated_at": datetime.now(),
+            }
+        )
+        self._session.execute(stmt)
+
+    def upsert_ai_advisor(self, pr_id: uuid.UUID, advisor_data: dict[str, Any]) -> None:
+        """Upsert AI advisor insights for a pull request."""
+        stmt = insert(AIAdvisor).values(
+            pull_request_id=pr_id,
+            missing_test_cases=advisor_data.get("missing_test_cases", []),
+            potential_edge_cases=advisor_data.get("potential_edge_cases", []),
+            suggested_documentation_updates=advisor_data.get("suggested_documentation_updates", []),
+            possible_performance_issues=advisor_data.get("possible_performance_issues", []),
+            security_recommendations=advisor_data.get("security_recommendations", []),
+            related_files_that_may_need_changes=advisor_data.get("related_files_that_may_need_changes", []),
+            rollback_strategy=advisor_data.get("rollback_strategy", ""),
+            deployment_checklist=advisor_data.get("deployment_checklist", []),
+            future_refactoring_suggestions=advisor_data.get("future_refactoring_suggestions", []),
+            suggested_reviewers=advisor_data.get("suggested_reviewers", []),
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=["pull_request_id"],
+            set_={
+                "missing_test_cases": stmt.excluded.missing_test_cases,
+                "potential_edge_cases": stmt.excluded.potential_edge_cases,
+                "suggested_documentation_updates": stmt.excluded.suggested_documentation_updates,
+                "possible_performance_issues": stmt.excluded.possible_performance_issues,
+                "security_recommendations": stmt.excluded.security_recommendations,
+                "related_files_that_may_need_changes": stmt.excluded.related_files_that_may_need_changes,
+                "rollback_strategy": stmt.excluded.rollback_strategy,
+                "deployment_checklist": stmt.excluded.deployment_checklist,
+                "future_refactoring_suggestions": stmt.excluded.future_refactoring_suggestions,
+                "suggested_reviewers": stmt.excluded.suggested_reviewers,
+                "updated_at": datetime.now(),
+            }
+        )
+        self._session.execute(stmt)
