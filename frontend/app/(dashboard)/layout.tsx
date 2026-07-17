@@ -37,7 +37,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/25">
             <Zap className="h-4 w-4 text-white" />
           </div>
-          <span className="text-sm font-bold tracking-tight">Engineering Memory</span>
+          <span className="text-sm font-bold tracking-tight">
+            Engineering Memory
+          </span>
         </div>
 
         {/* Org switcher */}
@@ -50,7 +52,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               A
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-white">Acme Corp</p>
+              <p className="truncate text-sm font-medium text-white">
+                Acme Corp
+              </p>
               <p className="text-xs text-slate-500">Free plan</p>
             </div>
             <ChevronDown className="h-4 w-4 text-slate-400" />
@@ -75,7 +79,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         : "text-slate-400 hover:bg-white/5 hover:text-white"
                     }`}
                   >
-                    <Icon className={`h-4 w-4 ${active ? "text-violet-400" : ""}`} />
+                    <Icon
+                      className={`h-4 w-4 ${active ? "text-violet-400" : ""}`}
+                    />
                     {label}
                   </Link>
                 </li>
@@ -85,7 +91,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* Bottom actions */}
-        <div className="border-t border-white/5 px-3 py-3 space-y-0.5">
+        <div className="space-y-0.5 border-t border-white/5 px-3 py-3">
           <Link
             href="/dashboard/settings"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-white"

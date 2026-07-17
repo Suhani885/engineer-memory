@@ -138,11 +138,35 @@ def process_raw_event(self: Any, raw_event_id: str) -> None:
             # 4. Deep AI Analysis (Summary)
             ai_data = analyze_pull_request(pr_details, files_data, parsed_data)
             if ai_data:
+                # Generate embeddings for key fields
+                from app.ai.embedder import generate_embeddings
+                
+                texts_to_embed = [
+                    ai_data.get("summary", ""),
+                    ai_data.get("engineering_impact", ""),
+                    ai_data.get("release_notes", "")
+                ]
+                embeddings = generate_embeddings(texts_to_embed)
+                if embeddings and len(embeddings) == 3:
+                    ai_data["summary_embedding"] = embeddings[0]
+                    ai_data["engineering_impact_embedding"] = embeddings[1]
+                    ai_data["release_notes_embedding"] = embeddings[2]
+                    
                 sync_repo.upsert_ai_analysis(pr_record.id, ai_data)
 
             # 5. Deep AI Advisor Insights
             advisor_data = generate_advisor_insights(pr_details, files_data, parsed_data)
             if advisor_data:
+                # Generate embedding for the full advisor JSON output
+                import json
+
+                from app.ai.embedder import generate_embeddings
+                
+                advisor_text = json.dumps(advisor_data)
+                advisor_embeddings = generate_embeddings([advisor_text])
+                if advisor_embeddings and len(advisor_embeddings) == 1:
+                    advisor_data["advisor_embedding"] = advisor_embeddings[0]
+                    
                 sync_repo.upsert_ai_advisor(pr_record.id, advisor_data)
 
             # Commit all changes to DB

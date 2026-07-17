@@ -10,7 +10,12 @@ import { authApi } from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ fullName: "", email: "", password: "", confirm: "" });
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -62,16 +67,24 @@ export default function RegisterPage() {
             <Zap className="h-6 w-6 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">Engineering Memory</h1>
-            <p className="text-sm text-slate-400">The memory layer for engineering teams</p>
+            <h1 className="text-2xl font-bold text-white">
+              Engineering Memory
+            </h1>
+            <p className="text-sm text-slate-400">
+              The memory layer for engineering teams
+            </p>
           </div>
         </div>
 
         {/* Card */}
         <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white">Create your account</h2>
-            <p className="mt-1 text-sm text-slate-400">Free forever for small teams</p>
+            <h2 className="text-xl font-semibold text-white">
+              Create your account
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Free forever for small teams
+            </p>
           </div>
 
           {error && (
@@ -82,7 +95,10 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="full-name" className="mb-1.5 block text-sm font-medium text-slate-300">
+              <label
+                htmlFor="full-name"
+                className="mb-1.5 block text-sm font-medium text-slate-300"
+              >
                 Full name <span className="text-slate-500">(optional)</span>
               </label>
               <input
@@ -97,7 +113,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="reg-email" className="mb-1.5 block text-sm font-medium text-slate-300">
+              <label
+                htmlFor="reg-email"
+                className="mb-1.5 block text-sm font-medium text-slate-300"
+              >
                 Email address
               </label>
               <input
@@ -113,7 +132,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="reg-password" className="mb-1.5 block text-sm font-medium text-slate-300">
+              <label
+                htmlFor="reg-password"
+                className="mb-1.5 block text-sm font-medium text-slate-300"
+              >
                 Password
               </label>
               <input
@@ -129,7 +151,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="reg-confirm" className="mb-1.5 block text-sm font-medium text-slate-300">
+              <label
+                htmlFor="reg-confirm"
+                className="mb-1.5 block text-sm font-medium text-slate-300"
+              >
                 Confirm password
               </label>
               <input

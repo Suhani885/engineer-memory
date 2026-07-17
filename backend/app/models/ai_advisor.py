@@ -4,6 +4,7 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -36,6 +37,9 @@ class AIAdvisor(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     deployment_checklist: Mapped[list[str]] = mapped_column(ARRAY(VARCHAR), nullable=False, default=list)
     future_refactoring_suggestions: Mapped[list[str]] = mapped_column(ARRAY(VARCHAR), nullable=False, default=list)
     suggested_reviewers: Mapped[list[str]] = mapped_column(ARRAY(VARCHAR), nullable=False, default=list)
+
+    # Embeddings
+    advisor_embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
 
     # Relationships
     pull_request: Mapped[PullRequest] = relationship("PullRequest", back_populates="ai_advisor")

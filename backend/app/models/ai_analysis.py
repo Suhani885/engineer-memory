@@ -4,6 +4,7 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT, VARCHAR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -39,6 +40,11 @@ class AIAnalysis(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     testing_required: Mapped[str] = mapped_column(TEXT, nullable=False, default="")
     breaking_changes: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     release_notes: Mapped[str] = mapped_column(TEXT, nullable=False, default="")
+
+    # Embeddings
+    summary_embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
+    engineering_impact_embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
+    release_notes_embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
 
     # Relationships
     pull_request: Mapped[PullRequest] = relationship("PullRequest", back_populates="ai_analysis")

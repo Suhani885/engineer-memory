@@ -243,6 +243,9 @@ class GitHubSyncRepository:
             testing_required=ai_data.get("testing_required", ""),
             breaking_changes=ai_data.get("breaking_changes", False),
             release_notes=ai_data.get("release_notes", ""),
+            summary_embedding=ai_data.get("summary_embedding"),
+            engineering_impact_embedding=ai_data.get("engineering_impact_embedding"),
+            release_notes_embedding=ai_data.get("release_notes_embedding"),
         )
 
         stmt = stmt.on_conflict_do_update(
@@ -261,6 +264,9 @@ class GitHubSyncRepository:
                 "testing_required": stmt.excluded.testing_required,
                 "breaking_changes": stmt.excluded.breaking_changes,
                 "release_notes": stmt.excluded.release_notes,
+                "summary_embedding": stmt.excluded.summary_embedding,
+                "engineering_impact_embedding": stmt.excluded.engineering_impact_embedding,
+                "release_notes_embedding": stmt.excluded.release_notes_embedding,
                 "updated_at": datetime.now(),
             }
         )
@@ -280,6 +286,7 @@ class GitHubSyncRepository:
             deployment_checklist=advisor_data.get("deployment_checklist", []),
             future_refactoring_suggestions=advisor_data.get("future_refactoring_suggestions", []),
             suggested_reviewers=advisor_data.get("suggested_reviewers", []),
+            advisor_embedding=advisor_data.get("advisor_embedding"),
         )
 
         stmt = stmt.on_conflict_do_update(
@@ -295,6 +302,7 @@ class GitHubSyncRepository:
                 "deployment_checklist": stmt.excluded.deployment_checklist,
                 "future_refactoring_suggestions": stmt.excluded.future_refactoring_suggestions,
                 "suggested_reviewers": stmt.excluded.suggested_reviewers,
+                "advisor_embedding": stmt.excluded.advisor_embedding,
                 "updated_at": datetime.now(),
             }
         )

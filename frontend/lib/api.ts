@@ -23,7 +23,8 @@ async function apiFetch<T>(
     ...(fetchOptions.headers as Record<string, string>),
   };
 
-  const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -115,7 +116,10 @@ export const authApi = {
     return data;
   },
 
-  async login(payload: { email: string; password: string }): Promise<TokenResponse> {
+  async login(payload: {
+    email: string;
+    password: string;
+  }): Promise<TokenResponse> {
     const data = await apiFetch<TokenResponse>("/api/v1/auth/login", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -133,7 +137,9 @@ export const authApi = {
   },
 
   getToken(): string | null {
-    return typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
+    return typeof window !== "undefined"
+      ? localStorage.getItem(TOKEN_KEY)
+      : null;
   },
 
   isAuthenticated(): boolean {
@@ -158,7 +164,9 @@ export const orgApi = {
   },
 
   async get(slug: string): Promise<OrgResponse> {
-    return apiFetch<OrgResponse>(`/api/v1/organizations/${slug}`, { orgSlug: slug });
+    return apiFetch<OrgResponse>(`/api/v1/organizations/${slug}`, {
+      orgSlug: slug,
+    });
   },
 
   async listMembers(slug: string): Promise<MemberResponse[]> {
