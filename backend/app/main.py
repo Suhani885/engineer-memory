@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.github.webhook import router as github_webhook_router
 from app.api.health import router as health_router
 from app.api.v1.router import router as v1_router
 from app.core.config import get_settings
@@ -23,11 +24,24 @@ def create_application() -> FastAPI:
         allow_origins=settings.cors_origin_list,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            "X-Request-ID",
+            # Org-scoped API calls
+            "X-Org-Slug",
+            # GitHub webhook verification
+            "X-Hub-Signature-256",
+            "X-GitHub-Event",
+            "X-GitHub-Delivery",
+        ],
     )
     app.include_router(health_router)
     app.include_router(v1_router, prefix="/api/v1")
+    # GitHub App webhook — intentionally outside /api/v1 (called by GitHub, not clients)
+    app.include_router(github_webhook_router, prefix="/github")
     return app
 
 
 app = create_application()
+

@@ -1,7 +1,5 @@
-export default function HomePage() {
-  return (
-    <main className="grid min-h-screen place-items-center p-8">
-      <p className="text-sm text-muted-foreground">Engineering Memory</p>
-    </main>
-  );
+import { redirect } from "next/navigation";
+
+export default function RootPage() {
+  redirect("/login");
 }

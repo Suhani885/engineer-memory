@@ -6,9 +6,10 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 from app.core.config import get_settings
-from app.models.base import Base
 
-# Import SQLAlchemy models here as they are introduced so autogenerate can see them.
+# Import all models here so autogenerate can see every table.
+from app.models import Membership, Organization, User  # noqa: F401
+from app.models.base import Base
 
 config = context.config
 
