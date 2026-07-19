@@ -16,6 +16,7 @@ dependencies = [
   "httpx>=0.28,<1.0",
   "openai>=1.50,<2.0",
   "passlib[bcrypt]>=1.7,<2.0",
+  "bcrypt==4.0.1",
   "psycopg[binary]>=3.2,<4.0",
   "pydantic-settings>=2.7,<3.0",
   "pgvector>=0.3,<1.0",

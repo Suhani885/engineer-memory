@@ -21,6 +21,8 @@ const navItems = [
   { icon: GitPullRequest, label: "Changes", href: "/dashboard/changes" },
   { icon: BookOpen, label: "Knowledge Base", href: "/dashboard/knowledge" },
   { icon: Clock, label: "Timeline", href: "/dashboard/timeline" },
+  { icon: BookOpen, label: "Digests", href: "/dashboard/digests" },
+  { icon: GitPullRequest, label: "Releases", href: "/dashboard/releases" },
   { icon: Search, label: "Search", href: "/dashboard/search" },
   { icon: BrainCircuit, label: "AI Advisor", href: "/dashboard/advisor" },
 ];

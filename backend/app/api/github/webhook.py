@@ -151,22 +151,93 @@ async def github_webhook(
         )
 
     # ------------------------------------------------------------------
-    # 7. Resolve GitHub installation → internal org (best-effort)
+    # 7. Resolve / auto-create org → installation → repository chain
     # ------------------------------------------------------------------
+    from sqlalchemy import select
+
+    from app.models.github_installation import GitHubInstallation
+    from app.models.github_repository import GitHubRepository
+    from app.models.organization import Organization
+
     org_id = None
+    installation_db_id = None
     installation_data = raw_payload.get("installation", {})
     installation_github_id = installation_data.get("id")
+    repo_data = raw_payload.get("repository", {})
+    sender = raw_payload.get("sender", {})
+    account = installation_data.get("account", {})
 
+    # Step 7a: resolve/create Organization
+    inst_repo_obj = GitHubInstallationRepository(db)
+    installation_record = None
     if installation_github_id:
-        installation_record = GitHubInstallationRepository(db).get_by_github_id(
-            installation_github_id
-        )
+        installation_record = inst_repo_obj.get_by_github_id(installation_github_id)
         if installation_record:
             org_id = installation_record.organization_id
+            installation_db_id = installation_record.id
+
+    if org_id is None:
+        # Auto-create org named after the GitHub account that installed the app
+        account_login = account.get("login") or sender.get("login") or "github"
+        existing_org = db.execute(
+            select(Organization).where(Organization.slug == account_login)
+        ).scalar_one_or_none()
+        if existing_org:
+            org_id = existing_org.id
         else:
-            logger.warning(
-                "No internal record for GitHub installation %s — storing event without org scope.",
-                installation_github_id,
+            new_org = Organization(
+                name=account_login,
+                slug=account_login,
+                plan="free",
+                is_active=True,
+            )
+            db.add(new_org)
+            db.flush()
+            org_id = new_org.id
+            logger.info("Auto-created organization slug=%s for GitHub account", account_login)
+
+    # Step 7b: resolve/create GitHubInstallation
+    if installation_github_id and installation_db_id is None:
+        new_installation = GitHubInstallation(
+            organization_id=org_id,
+            github_installation_id=installation_github_id,
+            github_app_id=str(settings.github_app_id or "0"),
+            github_account_login=account.get("login", "unknown"),
+            github_account_type=account.get("type", "User"),
+            permissions=installation_data.get("permissions", {}),
+            events=installation_data.get("events", []),
+            is_active=True,
+        )
+        db.add(new_installation)
+        db.flush()
+        installation_db_id = new_installation.id
+        logger.info("Auto-created GitHubInstallation github_id=%s", installation_github_id)
+
+    # Step 7c: resolve/create GitHubRepository
+    if repo_data.get("id"):
+        existing_repo = db.execute(
+            select(GitHubRepository).where(
+                GitHubRepository.github_repo_id == repo_data["id"]
+            )
+        ).scalar_one_or_none()
+
+        if not existing_repo and installation_db_id is not None and org_id is not None:
+            new_repo = GitHubRepository(
+                github_repo_id=repo_data["id"],
+                name=repo_data.get("name", "unknown"),
+                full_name=repo_data.get("full_name", "unknown"),
+                is_private=repo_data.get("private", False),
+                default_branch=repo_data.get("default_branch", "main"),
+                organization_id=org_id,
+                installation_id=installation_db_id,
+                permissions={},
+            )
+            db.add(new_repo)
+            db.flush()
+            logger.info(
+                "Auto-registered repository %s (github_id=%s)",
+                repo_data.get("full_name"),
+                repo_data["id"],
             )
 
     # ------------------------------------------------------------------

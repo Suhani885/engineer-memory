@@ -8,7 +8,6 @@ import {
   Github,
   CalendarDays,
   FileText,
-  User,
 } from "lucide-react";
 import {
   Bar,

@@ -27,14 +27,10 @@ class GitHubClient:
         if not self.settings.github_app_id or not self.settings.github_app_private_key:
             raise GitHubClientError("GitHub App ID or private key not configured.")
 
-        # The private key might be base64-encoded in the environment for easy injection
-        raw_key = self.settings.github_app_private_key
-        try:
-            # Try to base64 decode if it lacks PEM headers, otherwise use as-is
-            if "-----BEGIN" not in raw_key:
-                raw_key = base64.b64decode(raw_key).decode("utf-8")
-        except Exception:
-            pass  # Fall back to using it as-is if decoding fails
+        # Use the property that auto-resolves .pem file paths
+        raw_key = self.settings.github_private_key_content
+        if not raw_key:
+            raise GitHubClientError("Could not load GitHub App private key.")
 
         now = int(time.time())
         payload = {

@@ -72,3 +72,109 @@ export const mockChangedModules = [
   { name: "frontend/components", value: 15, fill: "hsl(var(--chart-4))" },
   { name: "infra/db", value: 5, fill: "hsl(var(--chart-5))" },
 ];
+
+export const mockTimelineNodes = [
+  {
+    id: "author-1",
+    type: "author",
+    position: { x: 0, y: 0 },
+    data: { label: "Suhani", avatar: "SU" },
+  },
+  {
+    id: "pr-1",
+    type: "pr",
+    position: { x: 0, y: 0 },
+    data: {
+      label: "PR #42: Hybrid Search",
+      repo: "engineer-memory",
+      url: "https://github.com/suhani/engineer-memory/pull/42",
+    },
+  },
+  {
+    id: "file-1",
+    type: "file",
+    position: { x: 0, y: 0 },
+    data: { label: "search.py" },
+  },
+  {
+    id: "file-2",
+    type: "file",
+    position: { x: 0, y: 0 },
+    data: { label: "assistant.py" },
+  },
+  {
+    id: "module-1",
+    type: "module",
+    position: { x: 0, y: 0 },
+    data: { label: "Backend API" },
+  },
+  {
+    id: "risk-1",
+    type: "risk",
+    position: { x: 0, y: 0 },
+    data: { label: "High Risk", description: "Direct DB Access" },
+  },
+  {
+    id: "deploy-1",
+    type: "deploy",
+    position: { x: 0, y: 0 },
+    data: { label: "Production", status: "Success" },
+  },
+
+  {
+    id: "author-2",
+    type: "author",
+    position: { x: 0, y: 0 },
+    data: { label: "Alex", avatar: "AL" },
+  },
+  {
+    id: "pr-2",
+    type: "pr",
+    position: { x: 0, y: 0 },
+    data: {
+      label: "PR #105: Layout fix",
+      repo: "frontend-core",
+      url: "https://github.com/suhani/engineer-memory/pull/105",
+    },
+  },
+  {
+    id: "file-3",
+    type: "file",
+    position: { x: 0, y: 0 },
+    data: { label: "page.tsx" },
+  },
+  {
+    id: "module-2",
+    type: "module",
+    position: { x: 0, y: 0 },
+    data: { label: "Frontend" },
+  },
+  {
+    id: "risk-2",
+    type: "risk",
+    position: { x: 0, y: 0 },
+    data: { label: "Low Risk", description: "CSS Changes" },
+  },
+  {
+    id: "deploy-2",
+    type: "deploy",
+    position: { x: 0, y: 0 },
+    data: { label: "Preview", status: "Success" },
+  },
+];
+
+export const mockTimelineEdges = [
+  { id: "e1", source: "author-1", target: "pr-1" },
+  { id: "e2", source: "pr-1", target: "file-1" },
+  { id: "e3", source: "pr-1", target: "file-2" },
+  { id: "e4", source: "file-1", target: "module-1" },
+  { id: "e5", source: "file-2", target: "module-1" },
+  { id: "e6", source: "module-1", target: "risk-1" },
+  { id: "e7", source: "risk-1", target: "deploy-1" },
+
+  { id: "e8", source: "author-2", target: "pr-2" },
+  { id: "e9", source: "pr-2", target: "file-3" },
+  { id: "e10", source: "file-3", target: "module-2" },
+  { id: "e11", source: "module-2", target: "risk-2" },
+  { id: "e12", source: "risk-2", target: "deploy-2" },
+];

@@ -5,7 +5,7 @@
  * from the FastAPI error body as the error message.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 const TOKEN_KEY = "em_access_token";
 
 // ---------------------------------------------------------------------------
@@ -190,6 +190,113 @@ export const orgApi = {
     return apiFetch<void>(`/api/v1/organizations/${slug}/members/${userId}`, {
       method: "DELETE",
       orgSlug: slug,
+    });
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Digest API
+// ---------------------------------------------------------------------------
+
+export interface DigestResponse {
+  id: string;
+  digest_type: string;
+  period_start: string;
+  period_end: string;
+  created_at: string;
+  markdown_content?: string;
+  structured_data?: Record<string, unknown>;
+}
+
+export const digestApi = {
+  async list(limit: number = 10): Promise<DigestResponse[]> {
+    return apiFetch<DigestResponse[]>(`/api/v1/digests?limit=${limit}`);
+  },
+
+  async get(id: string): Promise<DigestResponse> {
+    return apiFetch<DigestResponse>(`/api/v1/digests/${id}`);
+  },
+
+  async generate(periodType: "daily" | "weekly"): Promise<DigestResponse> {
+    return apiFetch<DigestResponse>("/api/v1/digests/generate", {
+      method: "POST",
+      body: JSON.stringify({ period_type: periodType }),
+    });
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Release API
+// ---------------------------------------------------------------------------
+
+export interface ReleaseResponse {
+  id: string;
+  start_tag_name: string;
+  end_tag_name: string;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  markdown_content?: string;
+  structured_data?: Record<string, unknown>;
+}
+
+export const releaseApi = {
+  async list(limit: number = 10): Promise<ReleaseResponse[]> {
+    return apiFetch<ReleaseResponse[]>(`/api/v1/releases?limit=${limit}`);
+  },
+
+  async get(id: string): Promise<ReleaseResponse> {
+    return apiFetch<ReleaseResponse>(`/api/v1/releases/${id}`);
+  },
+
+  async generate(payload: {
+    start_tag_name: string;
+    end_tag_name: string;
+    start_date: string;
+    end_date: string;
+  }): Promise<ReleaseResponse> {
+    return apiFetch<ReleaseResponse>("/api/v1/releases/generate", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+
+
+// ---------------------------------------------------------------------------
+// Search API
+// ---------------------------------------------------------------------------
+
+export interface SearchResult {
+  id: string;
+  repository: string;
+  pr_number: number;
+  title: string;
+  author: string;
+  merged_at: string | null;
+  risk_level: string;
+  summary: string;
+  engineering_impact: string;
+}
+
+export const searchApi = {
+  async search(q: string, limit = 10): Promise<{ results: SearchResult[] }> {
+    return apiFetch<{ results: SearchResult[] }>(
+      `/api/v1/search?q=${encodeURIComponent(q)}&limit=${limit}`
+    );
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Assistant API
+// ---------------------------------------------------------------------------
+
+export const assistantApi = {
+  async ask(question: string): Promise<{ answer: string }> {
+    return apiFetch<{ answer: string }>("/api/v1/assistant/ask", {
+      method: "POST",
+      body: JSON.stringify({ question }),
     });
   },
 };

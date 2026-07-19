@@ -5,6 +5,7 @@ Import all models here so that:
   2. SQLAlchemy relationship resolution works across modules.
 """
 
+from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 from app.models.ai_advisor import AIAdvisor
 from app.models.ai_analysis import AIAnalysis
 from app.models.commit import Commit
@@ -18,8 +19,13 @@ from app.models.pull_request_file import PullRequestFile
 from app.models.raw_event import RawEvent
 from app.models.reviewer import Reviewer
 from app.models.user import User
+from app.models.engineering_digest import EngineeringDigest
+from app.models.release_note import ReleaseNote
 
 __all__ = [
+    "Base",
+    "TimestampMixin",
+    "UUIDPrimaryKeyMixin",
     "Organization",
     "User",
     "Membership",
@@ -33,4 +39,6 @@ __all__ = [
     "ParsedChange",
     "AIAnalysis",
     "AIAdvisor",
+    "EngineeringDigest",
+    "ReleaseNote",
 ]
